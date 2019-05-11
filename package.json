@@ -1,0 +1,15 @@
+{
+    "name": "com.whoisfpc.consolevariable",
+    "displayName": "ConsoleVariable",
+    "version": "0.0.1",
+    "unity": "2019.1",
+    "keywords": ["unity", "console variable", "utility"],
+    "description": "console variable and a simple console gui implemention",
+    "dependencies": {
+     },
+     "author": {
+         "name": "wo_fpc",
+         "email": "wo_fpc@outlook.com",
+         "url": "https://github.com/whoisfpc"
+     }
+  }
