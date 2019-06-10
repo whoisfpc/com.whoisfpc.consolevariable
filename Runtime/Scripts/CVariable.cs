@@ -18,9 +18,23 @@ namespace ConsoleVariable
             Description = Description;
         }
 
-        public void SetValue(int value)
+        public bool SetValue(string valueString)
         {
-            field.SetValue(null, value);
+            if (field.FieldType == typeof(int))
+            {
+                if (int.TryParse(valueString, out int value))
+                {
+                    field.SetValue(null, value);
+                }
+            }
+            else if (field.FieldType == typeof(float))
+            {
+                if (float.TryParse(valueString, out float value))
+                {
+                    field.SetValue(null, value);
+                }
+            }
+            return false;
         }
 
         static CVariable()
@@ -39,14 +53,13 @@ namespace ConsoleVariable
                         {
                             continue;
                         }
-                        if (field.FieldType != typeof(int))
+                        if (field.FieldType == typeof(int) || field.FieldType == typeof(float))
                         {
-                            continue;
+                            var attr = field.GetCustomAttribute<CVarAttribute>(false);
+                            var name = attr.Name != null ? attr.Name : _class.Name.ToLower() + "." + field.Name.ToLower();
+                            var cvar = new CVariable(name, field, attr.Description);
+                            Register(cvar);
                         }
-                        var attr = field.GetCustomAttribute<CVarAttribute>(false);
-                        var name = attr.Name != null ? attr.Name : _class.Name.ToLower() + "." + field.Name.ToLower();
-                        var cvar = new CVariable(name, field, attr.Description);
-                        Register(cvar);
                     }
                 }
             }
@@ -78,12 +91,13 @@ namespace ConsoleVariable
             return null;
         }
 
-        public static void SetCVarValue(string name, int value)
+        public static bool SetCVarValue(string name, string valueString)
         {
             if (cvarMap.ContainsKey(name))
             {
-                cvarMap[name].SetValue(value);
+                return cvarMap[name].SetValue(valueString);
             }
+            return false;
         }
     }
 

@@ -21,9 +21,8 @@ namespace ConsoleVariable
         public string ProcessCommand(string command)
         {
             var tokens = command.Split(' ');
-            if (tokens.Length == 2 && int.TryParse(tokens[1], out var value))
+            if (tokens.Length == 2 && CVariable.SetCVarValue(tokens[0], tokens[1]))
             {
-                CVariable.SetCVarValue(tokens[0], value);
                 var output = string.Format("> {0}", command);
                 return output;
             }

@@ -8,7 +8,7 @@ So it is a simple console variable implement for unity.
         "com.whoisfpc.consolevariable": "https://github.com/whoisfpc/com.whoisfpc.consolevariable.git",
     }
 ```
-2. For any static int variables, add below attribute. The CVarAttribute accept two parameters, the first is name for console varialbe, and the second is description for that.
+2. For any static `int` or `float` variables, add below attribute. The CVarAttribute accept two parameters, the first is name for console varialbe, and the second is description for that.
 ```csharp
 using ConsoleVariable;
 
