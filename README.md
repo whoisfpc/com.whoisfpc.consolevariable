@@ -22,6 +22,7 @@ public class CVarTest : MonoBehaviour
 
 ## Simple Console Gui
 I made a simple console gui, you can find it at PackageFolder/Runtime/Prefabs/ConsoleGUI. For using it, just drag it to scene. At run time, press **&apos;** key(BackQuote key) to toggle console gui. You can input `CVarName [number]` to set CVar value, or input `CVarName` to see CVar's current value.
+You could press **Tab** key to auto complete command.
 
 ## Example
 ![](cvar_demo.gif)
