@@ -17,6 +17,10 @@ namespace ConsoleVariable
         void Awake()
         {
             inputField.onEndEdit.AddListener(OnSubmit);
+        }
+
+        void Start()
+        {
             inputField.skipKey = consoleKeyCode;
         }
 
