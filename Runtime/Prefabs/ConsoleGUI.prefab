@@ -355,7 +355,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01fafe5c4cf3dcd4683ed5124bc91e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 1899158082578788110}
+  inputField: {fileID: 6838724901271323197}
+  consoleKeyCode: 96
   rootPanel: {fileID: 3370207945584372772}
   bufferArea: {fileID: 1052409420215056599}
 --- !u!1 &4896899770930620571
@@ -448,7 +449,7 @@ GameObject:
   - component: {fileID: 7220725020821710955}
   - component: {fileID: 8492827604811690011}
   - component: {fileID: 7408371133956454345}
-  - component: {fileID: 1899158082578788110}
+  - component: {fileID: 6838724901271323197}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -513,7 +514,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &1899158082578788110
+--- !u!114 &6838724901271323197
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -522,7 +523,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5363830803414832978}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 575553740, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 268bb9fd762f1e748be183208226b1aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -580,6 +581,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  skipKey: 96
 --- !u!1 &5845833035414527794
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,9 @@ namespace ConsoleVariable
 {
     public class ConsoleGUI : MonoBehaviour
     {
-        public InputField inputField;
+        public ConsoleInputField inputField;
+        [Tooltip("KeyCode used to active or deactive console gui")]
+        public KeyCode consoleKeyCode = KeyCode.BackQuote;
         public Transform rootPanel;
         public Text bufferArea;
         private List<string> stringLines = new List<string>();
@@ -15,11 +17,12 @@ namespace ConsoleVariable
         void Awake()
         {
             inputField.onEndEdit.AddListener(OnSubmit);
+            inputField.skipKey = consoleKeyCode;
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if (Input.GetKeyDown(consoleKeyCode))
             {
                 SetOpen(!IsOpen());
             }
