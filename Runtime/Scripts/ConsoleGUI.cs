@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ConsoleVariable
 {
@@ -13,6 +14,7 @@ namespace ConsoleVariable
         public Text bufferArea;
         private List<string> stringLines = new List<string>();
         private static int maxTextBuffer = 100;
+        private List<string> candicateCommands = new List<string>();
 
         void Awake()
         {
@@ -29,6 +31,28 @@ namespace ConsoleVariable
             if (Input.GetKeyDown(consoleKeyCode))
             {
                 SetOpen(!IsOpen());
+            }
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                Console.Get().Autocomplete(inputField.text, candicateCommands);
+                if (candicateCommands.Count == 1)
+                {
+                    inputField.text = candicateCommands[0];
+                    inputField.caretPosition = candicateCommands[0].Length;
+                }
+                else if (candicateCommands.Count > 1)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < candicateCommands.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            sb.Append('\t');
+                        }
+                        sb.Append(candicateCommands[i]);
+                    }
+                    UpdateOutput(sb.ToString());
+                }
             }
         }
 

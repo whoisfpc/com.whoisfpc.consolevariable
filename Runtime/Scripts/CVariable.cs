@@ -63,9 +63,14 @@ namespace ConsoleVariable
                     }
                 }
             }
+            cvarList.Sort((a, b) => {
+                return a.Name.CompareTo(b.Name);
+            });
         }
 
         private static Dictionary<string, CVariable> cvarMap = new Dictionary<string, CVariable>();
+        private static List<CVariable> cvarList = new List<CVariable>();
+        public static List<CVariable> CVarList { get => cvarList; }
 
         private static void Register(CVariable cvar)
         {
@@ -75,6 +80,7 @@ namespace ConsoleVariable
                 return;
             }
             cvarMap[cvar.Name] = cvar;
+            cvarList.Add(cvar);
         }
 
         public static bool ContainsCVar(string name)

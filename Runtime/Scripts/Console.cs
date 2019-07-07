@@ -34,5 +34,19 @@ namespace ConsoleVariable
             }
             return string.Format("> {0}", command);
         }
+
+        // TODO: need improvement, use trie tree to accelerate find speed
+        public void Autocomplete(string partialCommand, List<string> candidates)
+        {
+            candidates.Clear();
+            var cvarList = CVariable.CVarList;
+            for (int i = 0; i < cvarList.Count; i++)
+            {
+                if (cvarList[i].Name.StartsWith(partialCommand))
+                {
+                    candidates.Add(cvarList[i].Name);
+                }
+            }
+        }
     }
 }

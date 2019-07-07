@@ -355,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01fafe5c4cf3dcd4683ed5124bc91e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputField: {fileID: 6838724901271323197}
+  inputField: {fileID: 8745011687783627654}
   consoleKeyCode: 96
   rootPanel: {fileID: 3370207945584372772}
   bufferArea: {fileID: 1052409420215056599}
@@ -449,7 +449,7 @@ GameObject:
   - component: {fileID: 7220725020821710955}
   - component: {fileID: 8492827604811690011}
   - component: {fileID: 7408371133956454345}
-  - component: {fileID: 6838724901271323197}
+  - component: {fileID: 8745011687783627654}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -514,7 +514,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &6838724901271323197
+--- !u!114 &8745011687783627654
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
