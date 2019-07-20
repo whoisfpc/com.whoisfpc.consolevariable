@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 namespace ConsoleVariable
 {
@@ -37,7 +38,12 @@ namespace ConsoleVariable
             return false;
         }
 
-        static CVariable()
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod]
+#else
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+#endif
+        static void Init()
         {
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {

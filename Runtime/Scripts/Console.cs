@@ -42,7 +42,7 @@ namespace ConsoleVariable
             var cvarList = CVariable.CVarList;
             for (int i = 0; i < cvarList.Count; i++)
             {
-                if (cvarList[i].Name.StartsWith(partialCommand))
+                if (cvarList[i].Name.StartsWith(partialCommand, StringComparison.InvariantCultureIgnoreCase))
                 {
                     candidates.Add(cvarList[i].Name);
                 }
