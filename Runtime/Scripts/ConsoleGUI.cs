@@ -47,7 +47,7 @@ namespace ConsoleVariable
                     {
                         if (i > 0)
                         {
-                            sb.Append('\t');
+                            sb.Append(' ');
                         }
                         sb.Append(candicateCommands[i]);
                     }
