@@ -79,7 +79,7 @@ namespace ConsoleVariable
             candidates.Clear();
             for (int i = 0; i < ccwarpperList.Count; i++)
             {
-                if (ccwarpperList[i].Name.StartsWith(partialCommand, StringComparison.InvariantCultureIgnoreCase))
+                if (ccwarpperList[i].Name.StartsWith(partialCommand))
                 {
                     candidates.Add(ccwarpperList[i].Name);
                 }
