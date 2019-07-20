@@ -3,6 +3,11 @@ All notable changes to this package will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [0.0.4] - 2019-07-20
+### Added
+- Add `CCmd` attribute
+- Add a built cmd `quit` to quit game or exit playmode when in editor
+
 ## [0.0.3] - 2019-07-07
 ### Added
 - Custom console toggle keycode

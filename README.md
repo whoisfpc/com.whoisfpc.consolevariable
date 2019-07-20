@@ -18,7 +18,20 @@ public class CVarTest : MonoBehaviour
     static int cubeScale = 1;
 }
 ```
-3. You can write your own console gui implement or use my simple gui prefab at **Runtime/Prefabs/ConsoleGUI**
+3. For any static method, you can add `CCmd` attribute to add cmd in console. For now, method args type must be `float`, `int`, or `string`. The name of `CCmd` and `CVar` should not same;
+```csharp
+using ConsoleVariable;
+
+public class CCmdTest : MonoBehaviour
+{
+    [CCmd("test.hello", "some console command description")]
+    static void Hello()
+    {
+        Debug.Log("Hello!");
+    }
+}
+```
+4. You can write your own console gui implement or use my simple gui prefab at **Runtime/Prefabs/ConsoleGUI**
 
 ## Simple Console Gui
 I made a simple console gui, you can find it at PackageFolder/Runtime/Prefabs/ConsoleGUI. For using it, just drag it to scene. At run time, press **&apos;** key(BackQuote key) to toggle console gui. You can input `CVarName [number]` to set CVar value, or input `CVarName` to see CVar's current value.
