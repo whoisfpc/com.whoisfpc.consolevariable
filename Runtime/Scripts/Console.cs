@@ -50,13 +50,13 @@ namespace ConsoleVariable
         {
             if (tokens.Length == 2 && SetCVarValue(tokens[0], tokens[1]))
             {
-                var output = string.Format("> {tokens[0]} {tokens[1]}");
+                var output = string.Format($"> {tokens[0]} {tokens[1]}");
                 return output;
             }
             else if (tokens.Length == 1 && ContainsCVar(tokens[0]))
             {
                 var cvarValue = GetCVarValue(tokens[0]);
-                var output = string.Format("> {0} = {1}", tokens[0], cvarValue);
+                var output = string.Format($"> {tokens[0]} = {cvarValue}");
                 return output;
             }
             return "> params count error!";

@@ -24,6 +24,7 @@ namespace ConsoleVariable
                 if (int.TryParse(valueString, out int value))
                 {
                     field.SetValue(null, value);
+                    return true;
                 }
             }
             else if (field.FieldType == typeof(float))
@@ -31,6 +32,7 @@ namespace ConsoleVariable
                 if (float.TryParse(valueString, out float value))
                 {
                     field.SetValue(null, value);
+                    return true;
                 }
             }
             return false;
