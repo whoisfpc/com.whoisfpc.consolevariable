@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [0.0.5] - 2019-11-02
 ### Added
+- Add history command support, use UpArrow or DownArrow to select history command
+
+## [0.0.5] - 2019-11-02
+### Added
 - Add error handle and colored message output
 
 ## [0.0.4] - 2019-07-20

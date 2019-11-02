@@ -23,9 +23,18 @@ namespace ConsoleVariable
                 {
                     consumedEvent = true;
                     EditState shouldContinue = EditState.Finish;
+                    bool notHistoryCmdKeys = consoleProcessingEvent.keyCode != KeyCode.UpArrow
+                        && consoleProcessingEvent.keyCode != KeyCode.DownArrow;
                     if (consoleProcessingEvent.keyCode != skipKey)
                     {
-                        shouldContinue = KeyPressed(consoleProcessingEvent);
+                        if (notHistoryCmdKeys)
+                        {
+                            shouldContinue = KeyPressed(consoleProcessingEvent);
+                        }
+                        else
+                        {
+                            shouldContinue = EditState.Continue;
+                        }
                     }
                     if (shouldContinue == EditState.Finish)
                     {

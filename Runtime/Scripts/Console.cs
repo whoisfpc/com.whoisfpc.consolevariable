@@ -79,6 +79,35 @@ namespace ConsoleVariable
             return new Result(false, $"cound not found cvar or ccmd \"{name}\"");
         }
 
+        private List<string> commandHistory = new List<string>();
+        private int currentHistroryCursor = 0;
+
+        private void PushHistory(string command)
+        {
+            commandHistory.Add(command);
+            currentHistroryCursor = commandHistory.Count;
+        }
+
+        public string GetPrevHistoryCommand()
+        {
+            if (currentHistroryCursor > 0)
+            {
+                currentHistroryCursor--;
+                return commandHistory[currentHistroryCursor];
+            }
+            return string.Empty;
+        }
+
+        public string GetNextHistoryCommand()
+        {
+            if (currentHistroryCursor < commandHistory.Count - 1)
+            {
+                currentHistroryCursor++;
+                return commandHistory[currentHistroryCursor];
+            }
+            return string.Empty;
+        }
+
         public string ProcessCommand(string command)
         {
             var tokens = Regex.Split(command, @"[\t\s]+").Where(s => !string.IsNullOrEmpty(s)).ToArray();
@@ -86,6 +115,7 @@ namespace ConsoleVariable
             {
                 return "command only contains white space.";
             }
+            PushHistory(command);
             string coloredCmd = TokensToColoredCmd(tokens);
             if (ContainsCVar(tokens[0]))
             {
@@ -105,8 +135,8 @@ namespace ConsoleVariable
                 }
                 return coloredCmd;
             }
-            Result error = new Result(false, "cound not find ccmd or cvar \"{tokens[0]}\"");
-            return $"{coloredCmd}\n{error.ToString()}";
+            Result error = new Result(false, $"cound not find ccmd or cvar \"{tokens[0]}\"");
+            return $"{coloredCmd}\n{error.ColoredString()}";
         }
 
         private static string TokensToColoredCmd(string[] tokens)

@@ -54,6 +54,24 @@ namespace ConsoleVariable
                     UpdateOutput(sb.ToString());
                 }
             }
+            if (Input.GetKeyDown(KeyCode.UpArrow) && inputField.isFocused)
+            {
+                var cmd = Console.Get().GetPrevHistoryCommand();
+                if (!string.IsNullOrEmpty(cmd))
+                {
+                    inputField.text = cmd;
+                    inputField.caretPosition = cmd.Length;
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) && inputField.isFocused)
+            {
+                var cmd = Console.Get().GetNextHistoryCommand();
+                if (!string.IsNullOrEmpty(cmd))
+                {
+                    inputField.text = cmd;
+                    inputField.caretPosition = cmd.Length;
+                }
+            }
         }
 
         private void UpdateOutput(string s)
