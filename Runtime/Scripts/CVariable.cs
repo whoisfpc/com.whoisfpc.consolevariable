@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace ConsoleVariable
 {
+    using Result = Console.Result;
     public class CVariable
     {
         public string Name { get; private set; }
@@ -14,17 +15,21 @@ namespace ConsoleVariable
         {
             Name = name;
             this.field = field;
-            Description = Description;
+            Description = description;
         }
 
-        public bool SetValue(string valueString)
+        public Result SetValue(string valueString)
         {
             if (field.FieldType == typeof(int))
             {
                 if (int.TryParse(valueString, out int value))
                 {
                     field.SetValue(null, value);
-                    return true;
+                    return new Result(true, $"set {Name} to {value}");
+                }
+                else
+                {
+                    return new Result(false, $"could not convert \"{valueString}\" to int");
                 }
             }
             else if (field.FieldType == typeof(float))
@@ -32,10 +37,14 @@ namespace ConsoleVariable
                 if (float.TryParse(valueString, out float value))
                 {
                     field.SetValue(null, value);
-                    return true;
+                    return new Result(true, $"set {Name} to {value}");
+                }
+                else
+                {
+                    return new Result(false, $"could not convert \"{valueString}\" to float");
                 }
             }
-            return false;
+            return new Result(false, $"not support cvar type \"{field.FieldType.ToString()}\"");
         }
     }
 

@@ -71,6 +71,10 @@ namespace ConsoleVariable
 
             inputField.text = "";
             inputField.ActivateInputField();
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
             var output = Console.Get().ProcessCommand(value);
             UpdateOutput(output);
         }

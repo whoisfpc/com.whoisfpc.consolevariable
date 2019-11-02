@@ -1,13 +1,46 @@
 ﻿using System;
 using System.Reflection;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Text;
 using UnityEngine;
 
 namespace ConsoleVariable
 {
     public class Console
     {
+        public struct Result
+        {
+            public bool success;
+            public string message;
+            public Result(bool success, string message)
+            {
+                this.success = success;
+                this.message = message;
+            }
+            public Result(bool success)
+            {
+                this.success = success;
+                this.message = string.Empty;
+            }
+            public string ColoredString()
+            {
+                if (string.IsNullOrEmpty(message))
+                {
+                    return string.Empty;
+                }
+                if (success)
+                {
+                    return $"<color=\"#1B813E\">{message}</color>";
+                }
+                else
+                {
+                    return $"<color=\"#c00\">{message}</color>";
+                }
+            }
+        }
+
         private static Console instance;
         public static Console Get()
         {
@@ -28,60 +61,106 @@ namespace ConsoleVariable
 #endif
         }
 
+        [CCmd("help", "print cvar or ccmd help description.")]
+        static Result Help(string name)
+        {
+            if (ccwrapperMap.ContainsKey(name))
+            {
+                var ccwrap = ccwrapperMap[name];
+                if (ccwrap.type == CCWrapper.WrappedType.CCmd)
+                {
+                    return new Result(true, ccwrap.cmd.Description);
+                }
+                else
+                {
+                    return new Result(true, ccwrap.cvar.Description);
+                }
+            }
+            return new Result(false, $"cound not found cvar or ccmd \"{name}\"");
+        }
+
         public string ProcessCommand(string command)
         {
-            var tokens = command.Split(' ');
+            var tokens = Regex.Split(command, @"[\t\s]+").Where(s => !string.IsNullOrEmpty(s)).ToArray();
             if (tokens.Length == 0)
             {
-                return string.Format("> {0}", command);
+                return "command only contains white space.";
             }
+            string coloredCmd = TokensToColoredCmd(tokens);
             if (ContainsCVar(tokens[0]))
             {
-                return ProcessCVar(tokens);
+                var result = ProcessCVar(tokens);
+                if (!string.IsNullOrWhiteSpace(result.message))
+                {
+                    return $"{coloredCmd}\n{result.ColoredString()}";
+                }
+                return coloredCmd;
             }
             else if (ContainsCCmd(tokens[0]))
             {
-                return ProcessCCmd(tokens);
+                var result = ProcessCCmd(tokens);
+                if (!string.IsNullOrWhiteSpace(result.message))
+                {
+                    return $"{coloredCmd}\n{result.ColoredString()}";
+                }
+                return coloredCmd;
             }
-            return string.Format("> {0}", command);
+            Result error = new Result(false, "cound not find ccmd or cvar \"{tokens[0]}\"");
+            return $"{coloredCmd}\n{error.ToString()}";
         }
 
-        private string ProcessCVar(string[] tokens)
+        private static string TokensToColoredCmd(string[] tokens)
         {
-            if (tokens.Length == 2 && SetCVarValue(tokens[0], tokens[1]))
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"> <color=\"#51A8DD\">{tokens[0]}</color>");
+            for (int i = 1; i < tokens.Length; i++)
             {
-                var output = string.Format($"> {tokens[0]} {tokens[1]}");
-                return output;
+                sb.Append(" ");
+                sb.Append(tokens[i]);
             }
-            else if (tokens.Length == 1 && ContainsCVar(tokens[0]))
-            {
-                var cvarValue = GetCVarValue(tokens[0]);
-                var output = string.Format($"> {tokens[0]} = {cvarValue}");
-                return output;
-            }
-            return "> params count error!";
+            return sb.ToString();
         }
 
-        private string ProcessCCmd(string[] tokens)
+        private Result ProcessCVar(string[] tokens)
+        {
+            if (tokens.Length == 2)
+            {
+                return SetCVarValue(tokens[0], tokens[1]);
+            }
+            else if (tokens.Length == 1)
+            {
+                if (ContainsCVar(tokens[0]))
+                {
+                    var cvarValue = GetCVarValue(tokens[0]);
+                    return new Result(true, $"{tokens[0]} = {cvarValue}");
+                }
+                else
+                {
+                    return new Result(false, $"cound not find cvar \"{tokens[0]}\"");
+                }
+            }
+            else
+            {
+                return new Result(false, "too more args, use [cvar] [value] to set new value, or use [cvar] to print value");
+            }
+        }
+
+        private Result ProcessCCmd(string[] tokens)
         {
             string[] args = new string[tokens.Length - 1];
             Array.Copy(tokens, 1, args, 0, args.Length);
-            if (RunCCmd(tokens[0], args))
-            {
-                return $"> run {tokens[0]} success!";
-            }
-            return $"> run {tokens[0]} fail!";
+            return RunCCmd(tokens[0], args);
         }
 
         // TODO: need improvement, use trie tree to accelerate find speed
         public void Autocomplete(string partialCommand, List<string> candidates)
         {
             candidates.Clear();
-            for (int i = 0; i < ccwarpperList.Count; i++)
+            for (int i = 0; i < ccwrapperList.Count; i++)
             {
-                if (ccwarpperList[i].Name.StartsWith(partialCommand))
+                if (ccwrapperList[i].Name.StartsWith(partialCommand))
                 {
-                    candidates.Add(ccwarpperList[i].Name);
+                    candidates.Add(ccwrapperList[i].Name);
                 }
             }
         }
@@ -127,17 +206,17 @@ namespace ConsoleVariable
                     }
                 }
             }
-            ccwarpperList.Sort((a, b) => {
+            ccwrapperList.Sort((a, b) => {
                 return a.Name.CompareTo(b.Name);
             });
         }
 
-        private static Dictionary<string, CCWrapper> ccwarpperMap = new Dictionary<string, CCWrapper>();
-        private static List<CCWrapper> ccwarpperList = new List<CCWrapper>();
+        private static Dictionary<string, CCWrapper> ccwrapperMap = new Dictionary<string, CCWrapper>();
+        private static List<CCWrapper> ccwrapperList = new List<CCWrapper>();
 
         private static void Register(CVariable cvar)
         {
-            if (ccwarpperMap.ContainsKey(cvar.Name))
+            if (ccwrapperMap.ContainsKey(cvar.Name))
             {
                 // duplicate name
                 Debug.LogWarning($"duplicate cvar or ccmd name: {cvar.Name}");
@@ -148,13 +227,13 @@ namespace ConsoleVariable
                 type = CCWrapper.WrappedType.CVar,
                 cvar = cvar,
             };
-            ccwarpperMap[wrapper.Name] = wrapper;
-            ccwarpperList.Add(wrapper);
+            ccwrapperMap[wrapper.Name] = wrapper;
+            ccwrapperList.Add(wrapper);
         }
 
         private static void Register(CCommand cmd)
         {
-            if (ccwarpperMap.ContainsKey(cmd.Name))
+            if (ccwrapperMap.ContainsKey(cmd.Name))
             {
                 // duplicate name
                 Debug.LogWarning($"duplicate cvar or ccmd name: {cmd.Name}");
@@ -165,45 +244,45 @@ namespace ConsoleVariable
                 type = CCWrapper.WrappedType.CCmd,
                 cmd = cmd,
             };
-            ccwarpperMap[wrapper.Name] = wrapper;
-            ccwarpperList.Add(wrapper);
+            ccwrapperMap[wrapper.Name] = wrapper;
+            ccwrapperList.Add(wrapper);
         }
 
         public static bool ContainsCVar(string name)
         {
-            return ccwarpperMap.ContainsKey(name) && ccwarpperMap[name].type == CCWrapper.WrappedType.CVar;
+            return ccwrapperMap.ContainsKey(name) && ccwrapperMap[name].type == CCWrapper.WrappedType.CVar;
         }
 
         public static string GetCVarValue(string name)
         {
             if (ContainsCVar(name))
             {
-                return ccwarpperMap[name].cvar.Value;
+                return ccwrapperMap[name].cvar.Value;
             }
             return null;
         }
 
-        public static bool SetCVarValue(string name, string valueString)
+        public static Result SetCVarValue(string name, string valueString)
         {
             if (ContainsCVar(name))
             {
-                return ccwarpperMap[name].cvar.SetValue(valueString);
+                return ccwrapperMap[name].cvar.SetValue(valueString);
             }
-            return false;
+            return new Result(false, $"cound not find cvar \"{name}\"");
         }
 
         public static bool ContainsCCmd(string name)
         {
-            return ccwarpperMap.ContainsKey(name) && ccwarpperMap[name].type == CCWrapper.WrappedType.CCmd;
+            return ccwrapperMap.ContainsKey(name) && ccwrapperMap[name].type == CCWrapper.WrappedType.CCmd;
         }
 
-        public static bool RunCCmd(string name, string[] paramStrings)
+        public static Result RunCCmd(string name, string[] paramStrings)
         {
             if (ContainsCCmd(name))
             {
-                return ccwarpperMap[name].cmd.RunCommand(paramStrings);
+                return ccwrapperMap[name].cmd.RunCommand(paramStrings);
             }
-            return false;
+            return new Result(false, $"cound not find ccmd \"{name}\"");
         }
     }
 }

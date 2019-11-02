@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace ConsoleVariable
 {
+    using Result = Console.Result;
     public class CCommand
     {
         public string Name { get; private set; }
@@ -14,7 +15,7 @@ namespace ConsoleVariable
         {
             Name = name;
             this.method = method;
-            Description = Description;
+            Description = description;
             var paramInfos = method.GetParameters();
             paramTypes = new Type[paramInfos.Length];
             for (int i = 0; i < paramTypes.Length; i++)
@@ -23,7 +24,7 @@ namespace ConsoleVariable
             }
         }
 
-        private bool ConvertToParams(string[] paramStrings, object[] parameters)
+        private Result ConvertToParams(string[] paramStrings, object[] parameters)
         {
             for (int i = 0; i < paramStrings.Length; i++)
             {
@@ -35,7 +36,7 @@ namespace ConsoleVariable
                     }
                     else
                     {
-                        return false;
+                        return new Result(false, $"the {i} arg type not match, need \"float\"");
                     }
                 }
                 else if (paramTypes[i] == typeof(int))
@@ -46,7 +47,7 @@ namespace ConsoleVariable
                     }
                     else
                     {
-                        return false;
+                        return new Result(false, $"the {i} arg type not match, need \"int\"");
                     }
                 }
                 else if (paramTypes[i] == typeof(string))
@@ -65,30 +66,35 @@ namespace ConsoleVariable
                     }
                     else
                     {
-                        return false;
+                        return new Result(false, $"the {i} arg type not match, need \"bool\"");
                     }
                 }
                 else
                 {
-                    return false;
+                    return new Result(false, $"the {i} arg type not support, \"{paramTypes[i].ToString()}\"");
                 }
             }
-            return true;
+            return new Result(true);
         }
 
-        public bool RunCommand(string[] paramStrings)
+        public Result RunCommand(string[] paramStrings)
         {
             if (paramStrings.Length != paramTypes.Length)
             {
-                return false;
+                return new Result(false, $"args length not match, require {paramTypes.Length} args, found {paramStrings.Length} args.");
             }
             var parameters = new object[paramTypes.Length];
-            if (ConvertToParams(paramStrings, parameters))
+            var convertResult = ConvertToParams(paramStrings, parameters);
+            if (convertResult.success)
             {
-                method.Invoke(null, parameters);
-                return true;
+                var o = method.Invoke(null, parameters);
+                if (o is Result)
+                {
+                    return (Result)o;
+                }
+                return new Result(true);;
             }
-            return false;
+            return convertResult;
         }
     }
 
